@@ -1,0 +1,9 @@
+# Analisar e extrair dados de feeds RSS
+feedparser
+
+# Extração de dados de arquivos HTML e XML
+beautifulsoup4
+
+# Visualizar progresso de tarefas.
+tqdm
+colorama
