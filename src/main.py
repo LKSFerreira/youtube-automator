@@ -1,24 +1,29 @@
 #!/usr/bin/env python3
-"""
-Arquivo principal que orquestra a execução das etapas do projeto.
-"""
-
+from typing import List
+import subprocess
 import os
-from busca_noticias import etapa_coleta
-from valida_json import percorrer_jsons
 
-def main():
-    DIR_BASE = os.path.abspath(os.path.join(os.path.dirname(__file__), ".."))
-    DIR_NEWS = os.path.join(DIR_BASE, "data", "news")
-    FEEDS = os.path.join(DIR_BASE, "rss_feeds.json")
+def executar_scripts() -> None:
+    """
+    Executa os scripts do projeto na ordem correta.
+    Em caso de erro em algum script, interrompe a execução.
+    """
+    diretorio_base = os.path.dirname(os.path.abspath(__file__))
+    diretorio_news = os.path.join(diretorio_base, "..", "data", "news")
+    diretorio_news_compiladas = os.path.join(diretorio_base, "..", "data", "news_compiladas")
+    
 
-    print("\n====== Iniciando coleta de notícias ======")
-    etapa_coleta(FEEDS, DIR_NEWS)
-    print("====== Coleta concluída com sucesso ======")
+    scripts = [
+        ["python", "src/busca_noticias.py"],
+        ["python", "src/valida_json.py", diretorio_news]
+    ]
     
-    print("\n====== Validando notícias nos arquivos JSON ======")
-    percorrer_jsons(DIR_NEWS)
-    print("====== Arquivos JSON validados com sucesso ======")
-    
+    for comando in scripts:
+        resultado = subprocess.run(comando)
+        
+        if resultado.returncode != 0:
+            print(f"Erro ao executar {comando[1]}. Processo interrompido.")
+            break
+
 if __name__ == '__main__':
-    main()
+    executar_scripts()
